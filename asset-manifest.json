@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/DemoQuiz/static/css/main.315a3e21.chunk.css",
+    "main.js": "/DemoQuiz/static/js/main.06de3d23.chunk.js",
+    "main.js.map": "/DemoQuiz/static/js/main.06de3d23.chunk.js.map",
+    "runtime-main.js": "/DemoQuiz/static/js/runtime-main.5beba520.js",
+    "runtime-main.js.map": "/DemoQuiz/static/js/runtime-main.5beba520.js.map",
+    "static/css/2.c1256375.chunk.css": "/DemoQuiz/static/css/2.c1256375.chunk.css",
+    "static/js/2.bb53a829.chunk.js": "/DemoQuiz/static/js/2.bb53a829.chunk.js",
+    "static/js/2.bb53a829.chunk.js.map": "/DemoQuiz/static/js/2.bb53a829.chunk.js.map",
+    "static/js/3.50ff5fc2.chunk.js": "/DemoQuiz/static/js/3.50ff5fc2.chunk.js",
+    "static/js/3.50ff5fc2.chunk.js.map": "/DemoQuiz/static/js/3.50ff5fc2.chunk.js.map",
+    "index.html": "/DemoQuiz/index.html",
+    "static/css/2.c1256375.chunk.css.map": "/DemoQuiz/static/css/2.c1256375.chunk.css.map",
+    "static/css/main.315a3e21.chunk.css.map": "/DemoQuiz/static/css/main.315a3e21.chunk.css.map",
+    "static/js/2.bb53a829.chunk.js.LICENSE.txt": "/DemoQuiz/static/js/2.bb53a829.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.5beba520.js",
+    "static/css/2.c1256375.chunk.css",
+    "static/js/2.bb53a829.chunk.js",
+    "static/css/main.315a3e21.chunk.css",
+    "static/js/main.06de3d23.chunk.js"
+  ]
+}
