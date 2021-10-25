@@ -165,7 +165,7 @@ function App() {
             </div>
           </Col>
         </Row>
-        <Row>
+        {/* <Row>
           <Col>
             <AudioRecord />
           </Col>
@@ -173,7 +173,7 @@ function App() {
             <VideoRecord />
           </Col>
         </Row>
-        <Row></Row>
+        <Row></Row> */}
       </Col>
     </Container>
   );
