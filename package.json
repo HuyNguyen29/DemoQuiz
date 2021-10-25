@@ -1,6 +1,6 @@
 {
   "name": "quiz",
-  "homepage": "https://huynguyen29.github.io/Quiz",
+  "homepage": "https://huynguyen29.github.io/DemoQuiz",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -13,6 +13,7 @@
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-rc.0",
     "react-dom": "^17.0.2",
+    "react-media-recorder": "^1.6.1",
     "react-scripts": "4.0.3",
     "web-vitals": "^1.0.1"
   },

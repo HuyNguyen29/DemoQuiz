@@ -4,6 +4,9 @@ import autosize from "autosize";
 import { useCallback, useEffect, useRef, useState } from "react";
 import SelectQuestionComponent from "./selectQuestionComponent/SelectQuestionComponent";
 import SelectQuestionContainer from "./selectQuestionComponent/SelectQuestionContainer";
+import { useReactMediaRecorder } from "react-media-recorder";
+import AudioRecord from "./AudioRecord";
+import VideoRecord from "./VideoRecord";
 
 function App() {
   const ref = useRef(null);
@@ -11,6 +14,16 @@ function App() {
 
   const [selected, setSelected] = useState(0);
   const [selectedOption, setSelectedOption] = useState(0);
+
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({ audio: true });
+
+  const {
+    statusVideo,
+    startRecordingVideo,
+    stopRecordingVideo,
+    mediaBlobUrlVideo,
+  } = useReactMediaRecorder({ video: true });
 
   useEffect(() => {
     const tmp = JSON.parse(localStorage.getItem("data"));
@@ -84,73 +97,84 @@ function App() {
 
   return (
     <Container fluid className="p-0">
-      <Row>
-        <Col
-          className="left-container"
-          lg={4} //992
-          md={4} // >= 768
-          xl={4} //1200
-          sm={5} // >=576
-          xs={12} //<576
-          xxl={4} // >14000
-        >
-          <div className={"left-item"}>
-            <ul className={"list-item"}>
-              <h6 className={"txt-title"}>Select your questions</h6>
-              {data.map((item, index) => (
-                <SelectQuestionComponent
-                  index={index}
-                  key={item.question}
-                  data={item}
-                  selected={selected}
-                  setSelected={setSelectQuestion}
-                />
-              ))}
-            </ul>
-            <Row className={"two-button-container"}>
-              <Col className={"button-left"}>
-                <Button
-                  style={{ fontSize: 10, fontWeight: "bold", width: 70 }}
-                  type="submit"
-                  onClick={onAddClicked}
-                >
-                  ADD
-                </Button>
-              </Col>
-              <Col className={"button-right"}>
-                <Button
-                  style={{ fontSize: 10, fontWeight: "bold", width: 70 }}
-                  type="submit"
-                  onClick={onDeleteClicked}
-                >
-                  DELETE
-                </Button>
-              </Col>
-            </Row>
-          </div>
-        </Col>
-        <Col
-          lg={8}
-          md={8}
-          sm={7}
-          xl={8}
-          xs={12}
-          xxl={8}
-          className="right-container"
-        >
-          <div className={"right-item"}>
-            <SelectQuestionContainer
-              data={data}
-              selected={selected}
-              onChangeQuestion={onChangeQuestion}
-              onAddAnswer={onAddAnswer}
-              onDeleteAnswer={onDeleteAnswer}
-              setSelectedOption={setOption}
-              onChangeAnswer={onChangeAnswer}
-            />
-          </div>
-        </Col>
-      </Row>
+      <Col>
+        <Row>
+          <Col
+            className="left-container"
+            lg={4} //992
+            md={4} // >= 768
+            xl={4} //1200
+            sm={5} // >=576
+            xs={12} //<576
+            xxl={4} // >14000
+          >
+            <div className={"left-item"}>
+              <ul className={"list-item"}>
+                <h6 className={"txt-title"}>Select your questions</h6>
+                {data.map((item, index) => (
+                  <SelectQuestionComponent
+                    index={index}
+                    key={item.question}
+                    data={item}
+                    selected={selected}
+                    setSelected={setSelectQuestion}
+                  />
+                ))}
+              </ul>
+              <Row className={"two-button-container"}>
+                <Col className={"button-left"}>
+                  <Button
+                    style={{ fontSize: 10, fontWeight: "bold", width: 70 }}
+                    type="submit"
+                    onClick={onAddClicked}
+                  >
+                    ADD
+                  </Button>
+                </Col>
+                <Col className={"button-right"}>
+                  <Button
+                    style={{ fontSize: 10, fontWeight: "bold", width: 70 }}
+                    type="submit"
+                    onClick={onDeleteClicked}
+                  >
+                    DELETE
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </Col>
+          <Col
+            lg={8}
+            md={8}
+            sm={7}
+            xl={8}
+            xs={12}
+            xxl={8}
+            className="right-container"
+          >
+            <div className={"right-item"}>
+              <SelectQuestionContainer
+                data={data}
+                selected={selected}
+                onChangeQuestion={onChangeQuestion}
+                onAddAnswer={onAddAnswer}
+                onDeleteAnswer={onDeleteAnswer}
+                setSelectedOption={setOption}
+                onChangeAnswer={onChangeAnswer}
+              />
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <AudioRecord />
+          </Col>
+          <Col>
+            <VideoRecord />
+          </Col>
+        </Row>
+        <Row></Row>
+      </Col>
     </Container>
   );
 }
