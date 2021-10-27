@@ -64,7 +64,7 @@ function SelectQuestionContainer(props) {
               placeholder="Type question"
               rows={1}
               onChange={props.onChangeQuestion}
-              value={props.data[props.selected]?.question}
+              value={props.data?.[props.selected]?.question}
             />
             <div
               style={{

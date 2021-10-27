@@ -24,7 +24,7 @@ function AnswerComponent(props) {
         width: "100%",
       }}
     >
-      {props.data[props.selected]?.answer.map((answer, index) => (
+      {props?.data?.[props.selected]?.answer.map((answer, index) => (
         <>
           <Col
             style={{ padding: 0 }}

@@ -31,9 +31,10 @@ function App() {
   } = useReactMediaRecorder({ video: true });
 
   useEffect(() => {
+    console.log(`%c data`, "color: red; font-weight: 600", data);
     const tmp = JSON.parse(localStorage.getItem("data"));
     console.log(`%c tmp`, "color: blue; font-weight: 600", tmp);
-    if (tmp?.length !== 0) {
+    if (tmp && tmp?.length !== 0) {
       setData(tmp);
     } else {
       setData([{ question: "", answer: [{ option: "" }] }]);
@@ -135,7 +136,7 @@ function App() {
             <div className={"left-item"}>
               <ul className={"list-item"}>
                 <h6 className={"txt-title"}>Select your questions</h6>
-                {data.map((item, index) => (
+                {data?.map((item, index) => (
                   <SelectQuestionComponent
                     index={index}
                     key={item.question}
