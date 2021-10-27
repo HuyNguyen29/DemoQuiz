@@ -2,6 +2,8 @@ import { Col, Row, Button } from "react-bootstrap";
 import autosize from "autosize";
 import React, { useEffect, useRef, useState } from "react";
 import AnswerComponent from "../answerComponent/AnswerComponent";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
 
 function SelectQuestionContainer(props) {
   const ref = useRef(null);
@@ -19,6 +21,11 @@ function SelectQuestionContainer(props) {
       };
       reader.readAsDataURL(event.target.files[0]);
     }
+  };
+
+  const onDeleteAnswer = (close) => {
+    props.onDeleteAnswer();
+    close();
   };
 
   return (
@@ -73,7 +80,7 @@ function SelectQuestionContainer(props) {
                 id="group_image"
               />
               {!!img ? (
-                <img className={'img-add'} src={img}  alt="description" />
+                <img className={"img-add"} src={img} alt="description" />
               ) : null}
               {/* <Button
                 style={{ fontSize: 10, fontWeight: "bold" }}
@@ -104,13 +111,48 @@ function SelectQuestionContainer(props) {
           </Button>
         </Col>
         <Col className={"button-right"}>
-          <Button
-            style={{ fontSize: 10, fontWeight: "bold" }}
-            type="submit"
-            onClick={props.onDeleteAnswer}
+          <Popup
+            trigger={
+              <Button
+                style={{ fontSize: 10, fontWeight: "bold" }}
+                type="submit"
+              >
+                DELETE
+              </Button>
+            }
+            modal
           >
-            DELETE
-          </Button>
+            {(close) => (
+              <div>
+                <h6 className={"txt-title"}>
+                  Are you sure to delete this item?
+                </h6>
+                <Button
+                  style={{
+                    fontSize: 10,
+                    fontWeight: "bold",
+                    width: 70,
+                  }}
+                  type="submit"
+                  onClick={() => onDeleteAnswer(close)}
+                >
+                  Yes
+                </Button>
+                <Button
+                  style={{
+                    fontSize: 10,
+                    fontWeight: "bold",
+                    width: 70,
+                    marginLeft: 10,
+                  }}
+                  variant="secondary"
+                  onClick={() => close()}
+                >
+                  No
+                </Button>
+              </div>
+            )}
+          </Popup>
         </Col>
       </Row>
     </div>

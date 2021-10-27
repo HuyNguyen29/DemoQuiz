@@ -7,10 +7,15 @@ import SelectQuestionContainer from "./selectQuestionComponent/SelectQuestionCon
 import { useReactMediaRecorder } from "react-media-recorder";
 import AudioRecord from "./AudioRecord";
 import VideoRecord from "./VideoRecord";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
 
 function App() {
   const ref = useRef(null);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([
+    { question: "", answer: [{ option: "" }] },
+  ]);
+  const [show, setShow] = useState(true);
 
   const [selected, setSelected] = useState(0);
   const [selectedOption, setSelectedOption] = useState(0);
@@ -27,16 +32,21 @@ function App() {
 
   useEffect(() => {
     const tmp = JSON.parse(localStorage.getItem("data"));
-    if (tmp) {
+    console.log(`%c tmp`, "color: blue; font-weight: 600", tmp);
+    if (tmp?.length !== 0) {
       setData(tmp);
     } else {
-      setData([]);
+      setData([{ question: "", answer: [{ option: "" }] }]);
     }
   }, []);
 
   useEffect(() => {
     autosize(ref.current);
   });
+
+  useEffect(() => {
+    console.log(`%c data`, "color: blue; font-weight: 600", data);
+  }, [data]);
 
   const setSelectQuestion = useCallback((index) => {
     setSelected(index);
@@ -47,14 +57,26 @@ function App() {
     const tmp = [...data];
     tmp.push(add);
     setData(tmp);
+    localStorage.setItem("data", JSON.stringify(tmp));
     setSelected(tmp.length - 1);
   }, [data]);
 
-  const onDeleteClicked = useCallback(() => {
-    const tmp = [...data];
-    tmp.splice(selected, 1);
-    setData(tmp);
-  }, [selected, data]);
+  const onDeleteClicked = useCallback(
+    (close) => {
+      let tmp = [...data];
+      tmp.splice(selected, 1);
+      if (tmp?.length === 0) {
+        tmp = [{ question: "", answer: [{ option: "" }] }];
+        setData(tmp);
+        localStorage.setItem("data", JSON.stringify(tmp));
+      } else {
+        setData(tmp);
+        localStorage.setItem("data", JSON.stringify(tmp));
+      }
+      close();
+    },
+    [selected, data]
+  );
 
   const onChangeQuestion = useCallback(
     (event) => {
@@ -83,12 +105,14 @@ function App() {
     const tmp = [...data];
     tmp[selected].answer.push(add);
     setData(tmp);
+    localStorage.setItem("data", JSON.stringify(tmp));
   }, [data, selected]);
 
   const onDeleteAnswer = useCallback(() => {
     const tmp = [...data];
     tmp[selected].answer.splice(selectedOption, 1);
     setData(tmp);
+    localStorage.setItem("data", JSON.stringify(tmp));
   }, [data, selected, selectedOption]);
 
   const setOption = useCallback((index) => {
@@ -132,13 +156,49 @@ function App() {
                   </Button>
                 </Col>
                 <Col className={"button-right"}>
-                  <Button
-                    style={{ fontSize: 10, fontWeight: "bold", width: 70 }}
-                    type="submit"
-                    onClick={onDeleteClicked}
+                  <Popup
+                    trigger={
+                      <Button
+                        style={{ fontSize: 10, fontWeight: "bold", width: 70 }}
+                        type="submit"
+                        onClick={onAddClicked}
+                      >
+                        DELETE
+                      </Button>
+                    }
+                    modal
                   >
-                    DELETE
-                  </Button>
+                    {(close) => (
+                      <div>
+                        <h6 className={"txt-title"}>
+                          Are you sure to delete this item?
+                        </h6>
+                        <Button
+                          style={{
+                            fontSize: 10,
+                            fontWeight: "bold",
+                            width: 70,
+                          }}
+                          type="submit"
+                          onClick={() => onDeleteClicked(close)}
+                        >
+                          Yes
+                        </Button>
+                        <Button
+                          style={{
+                            fontSize: 10,
+                            fontWeight: "bold",
+                            width: 70,
+                            marginLeft: 10,
+                          }}
+                          variant="secondary"
+                          onClick={() => close()}
+                        >
+                          No
+                        </Button>
+                      </div>
+                    )}
+                  </Popup>
                 </Col>
               </Row>
             </div>
