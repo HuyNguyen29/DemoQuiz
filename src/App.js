@@ -15,7 +15,9 @@ const tmpNull = { question: "", answer: [{ option: "" }], img: "" };
 function App() {
   const ref = useRef(null);
   const refListQuestion = useRef(null);
-  const [data, setData] = useState([tmpNull]);
+  const [data, setData] = useState([
+    { question: "", answer: [{ option: "" }], img: "" },
+  ]);
   const [show, setShow] = useState(true);
 
   const [selected, setSelected] = useState(0);
@@ -36,7 +38,7 @@ function App() {
     if (tmp && tmp?.length !== 0) {
       setData(tmp);
     } else {
-      setData([tmpNull]);
+      setData([{ question: "", answer: [{ option: "" }], img: "" }]);
     }
   }, []);
 
@@ -49,7 +51,7 @@ function App() {
   }, []);
 
   const onAddClicked = useCallback(() => {
-    const add = tmpNull;
+    const add = { question: "", answer: [{ option: "" }], img: "" };
     const tmp = [...data];
     tmp.push(add);
     setData(tmp);
@@ -65,7 +67,7 @@ function App() {
       let tmp = [...data];
       tmp.splice(selected, 1);
       if (tmp?.length === 0) {
-        tmp = [tmpNull];
+        tmp = [{ question: "", answer: [{ option: "" }], img: "" }];
         setData(tmp);
         localStorage.setItem("data", JSON.stringify(tmp));
       } else {

@@ -7,7 +7,6 @@ const VideoRecord = (props) => {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    console.log(`%c status`, "color: blue; font-weight: 600", status);
     if (status === "recording") {
       navigator.mediaDevices
         .getUserMedia({ video: true })
