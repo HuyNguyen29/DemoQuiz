@@ -7,7 +7,9 @@ import "reactjs-popup/dist/index.css";
 
 function SelectQuestionContainer(props) {
   const ref = useRef(null);
-  const [img, setImg] = useState("");
+  const selectImageRef = useRef(null);
+  const refOption = useRef(null);
+  const [selected, setSelected] = useState();
 
   useEffect(() => {
     autosize(ref.current);
@@ -17,7 +19,7 @@ function SelectQuestionContainer(props) {
     if (event.target.files && event.target.files[0]) {
       let reader = new FileReader();
       reader.onload = (e) => {
-        setImg(e.target.result);
+        props.onAddImg(e.target.result);
       };
       reader.readAsDataURL(event.target.files[0]);
     }
@@ -26,6 +28,27 @@ function SelectQuestionContainer(props) {
   const onDeleteAnswer = (close) => {
     props.onDeleteAnswer();
     close();
+  };
+
+  const setSelectedOption = (index) => {
+    props.setSelectedOption(index);
+    setSelected(index);
+  };
+
+  const onClickSelectImage = () => {
+    selectImageRef.current?.click();
+  };
+
+  const onDeleteSelectImage = (close) => {
+    props.onDeleteImg();
+    close();
+  };
+
+  const onAddOption = () => {
+    props.onAddAnswer();
+    setTimeout(() => {
+      refOption.current.scrollToBottom();
+    }, 200);
   };
 
   return (
@@ -55,7 +78,7 @@ function SelectQuestionContainer(props) {
               style={{
                 maxHeight: "75px",
                 minHeight: "38px",
-                width: "100%",
+                width: "95%",
                 resize: "none",
                 boxSizing: "border-box",
                 fontSize: "1rem",
@@ -66,46 +89,111 @@ function SelectQuestionContainer(props) {
               onChange={props.onChangeQuestion}
               value={props.data?.[props.selected]?.question}
             />
-            <div
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                display: "flex",
-              }}
-            >
-              <input
-                type="file"
-                onChange={onImageChange}
-                className="filetype"
-                id="group_image"
-              />
-              {!!img ? (
-                <img className={"img-add"} src={img} alt="description" />
-              ) : null}
-              {/* <Button
-                style={{ fontSize: 10, fontWeight: "bold" }}
-                type="submit"
-              >
-                ADD IMAGE
-              </Button> */}
-            </div>
+            {!!props.data?.[props.selected]?.img ? (
+              <div class="d-flex align-items-center flex-column">
+                <img
+                  style={{ maxHeight: "20vh" }}
+                  src={props.data?.[props.selected]?.img}
+                  alt="description"
+                />
+                <div class="d-flex justify-content-center">
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={onImageChange}
+                      className="d-none"
+                      id="group_image"
+                      ref={selectImageRef}
+                    />
+                    <Button
+                      className="btn btn-primary bg-gradient m-2"
+                      onClick={onClickSelectImage}
+                      variant="secondary"
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                  <Popup
+                    trigger={
+                      <Button
+                        className="btn btn-primary bg-gradient m-2"
+                        onClick={onDeleteSelectImage}
+                        variant="danger"
+                      >
+                        Delete
+                      </Button>
+                    }
+                    modal
+                  >
+                    {(close) => (
+                      <div>
+                        <h6 className={"txt-title"}>
+                          Are you sure to delete this image?
+                        </h6>
+                        <Button
+                          style={{
+                            fontSize: 10,
+                            fontWeight: "bold",
+                            width: 70,
+                          }}
+                          type="submit"
+                          onClick={() => onDeleteSelectImage(close)}
+                        >
+                          Yes
+                        </Button>
+                        <Button
+                          style={{
+                            fontSize: 10,
+                            fontWeight: "bold",
+                            width: 70,
+                            marginLeft: 10,
+                          }}
+                          variant="secondary"
+                          onClick={() => close()}
+                        >
+                          No
+                        </Button>
+                      </div>
+                    )}
+                  </Popup>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={onImageChange}
+                  className="d-none"
+                  id="group_image"
+                  ref={selectImageRef}
+                />
+                <Button
+                  className="btn btn-primary bg-gradient m-2"
+                  onClick={onClickSelectImage}
+                >
+                  Add Image
+                </Button>
+              </div>
+            )}
           </Col>
         </Row>
       </ul>
-      <ul className={"list-item-answer"}>
-        <AnswerComponent
-          data={props.data}
-          selected={props.selected}
-          setSelectedOption={props.setSelectedOption}
-          onChangeAnswer={props.onChangeAnswer}
-        />
-      </ul>
+
+      <AnswerComponent
+        data={props.data}
+        selected={props.selected}
+        setSelectedOption={setSelectedOption}
+        onChangeAnswer={props.onChangeAnswer}
+        ref={refOption}
+      />
       <Row className={"two-button-container"}>
         <Col className={"button-left"}>
           <Button
             style={{ fontSize: 10, fontWeight: "bold" }}
             type="submit"
-            onClick={props.onAddAnswer}
+            onClick={onAddOption}
           >
             ADD
           </Button>
@@ -116,6 +204,7 @@ function SelectQuestionContainer(props) {
               <Button
                 style={{ fontSize: 10, fontWeight: "bold" }}
                 type="submit"
+                variant="danger"
               >
                 DELETE
               </Button>
@@ -125,7 +214,7 @@ function SelectQuestionContainer(props) {
             {(close) => (
               <div>
                 <h6 className={"txt-title"}>
-                  Are you sure to delete this item?
+                  Are you sure to delete option number {selected + 1}?
                 </h6>
                 <Button
                   style={{

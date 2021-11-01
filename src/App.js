@@ -10,11 +10,12 @@ import VideoRecord from "./VideoRecord";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 
+const tmpNull = { question: "", answer: [{ option: "" }], img: "" };
+
 function App() {
   const ref = useRef(null);
-  const [data, setData] = useState([
-    { question: "", answer: [{ option: "" }] },
-  ]);
+  const refListQuestion = useRef(null);
+  const [data, setData] = useState([tmpNull]);
   const [show, setShow] = useState(true);
 
   const [selected, setSelected] = useState(0);
@@ -31,13 +32,11 @@ function App() {
   } = useReactMediaRecorder({ video: true });
 
   useEffect(() => {
-    console.log(`%c data`, "color: red; font-weight: 600", data);
     const tmp = JSON.parse(localStorage.getItem("data"));
-    console.log(`%c tmp`, "color: blue; font-weight: 600", tmp);
     if (tmp && tmp?.length !== 0) {
       setData(tmp);
     } else {
-      setData([{ question: "", answer: [{ option: "" }] }]);
+      setData([tmpNull]);
     }
   }, []);
 
@@ -45,21 +44,20 @@ function App() {
     autosize(ref.current);
   });
 
-  useEffect(() => {
-    console.log(`%c data`, "color: blue; font-weight: 600", data);
-  }, [data]);
-
   const setSelectQuestion = useCallback((index) => {
     setSelected(index);
   }, []);
 
   const onAddClicked = useCallback(() => {
-    const add = { question: "", answer: [{ option: "" }] };
+    const add = tmpNull;
     const tmp = [...data];
     tmp.push(add);
     setData(tmp);
     localStorage.setItem("data", JSON.stringify(tmp));
     setSelected(tmp.length - 1);
+    setTimeout(() => {
+      refListQuestion.current.scrollToBottom();
+    }, 200);
   }, [data]);
 
   const onDeleteClicked = useCallback(
@@ -67,7 +65,7 @@ function App() {
       let tmp = [...data];
       tmp.splice(selected, 1);
       if (tmp?.length === 0) {
-        tmp = [{ question: "", answer: [{ option: "" }] }];
+        tmp = [tmpNull];
         setData(tmp);
         localStorage.setItem("data", JSON.stringify(tmp));
       } else {
@@ -95,18 +93,19 @@ function App() {
       tmp[selected].answer[selectedOption].option =
         event.nativeEvent.target.value;
       setData(tmp);
-      console.log(`%c tmp`, "color: blue; font-weight: 600", tmp);
       localStorage.setItem("data", JSON.stringify(tmp));
     },
     [data, selected, selectedOption]
   );
 
   const onAddAnswer = useCallback(() => {
-    const add = { option: "" };
     const tmp = [...data];
-    tmp[selected].answer.push(add);
-    setData(tmp);
-    localStorage.setItem("data", JSON.stringify(tmp));
+    if (tmp[selected].answer.length < 6) {
+      const add = { option: "" };
+      tmp[selected].answer.push(add);
+      setData(tmp);
+      localStorage.setItem("data", JSON.stringify(tmp));
+    }
   }, [data, selected]);
 
   const onDeleteAnswer = useCallback(() => {
@@ -120,32 +119,47 @@ function App() {
     setSelectedOption(index);
   }, []);
 
+  const onDeleteImg = useCallback(() => {
+    const tmp = [...data];
+    tmp[selected].img = null;
+    setData(tmp);
+    localStorage.setItem("data", JSON.stringify(tmp));
+  }, [data, selected, selectedOption]);
+
+  const onAddImg = useCallback(
+    (img) => {
+      const tmp = [...data];
+      tmp[selected].img = img;
+      setData(tmp);
+      localStorage.setItem("data", JSON.stringify(tmp));
+    },
+    [data, selected, selectedOption]
+  );
+
+  const handleOnBackToQuetionList = () => {
+    setSelected(0);
+  };
+
   return (
     <Container fluid className="p-0">
       <Col>
         <Row>
-          <Col
-            className="left-container"
-            lg={4} //992
-            md={4} // >= 768
-            xl={4} //1200
-            sm={5} // >=576
-            xs={12} //<576
-            xxl={4} // >14000
+          <div
+            className={`left-pane col-sm-4 ${
+              selected ? "d-none d-md-block" : ""
+            }`}
+            style={{ backgroundColor: "rgb(0, 187, 255)" }}
           >
             <div className={"left-item"}>
-              <ul className={"list-item"}>
-                <h6 className={"txt-title"}>Select your questions</h6>
-                {data?.map((item, index) => (
-                  <SelectQuestionComponent
-                    index={index}
-                    key={item.question}
-                    data={item}
-                    selected={selected}
-                    setSelected={setSelectQuestion}
-                  />
-                ))}
-              </ul>
+              <h6 className={"txt-title"} style={{ paddingLeft: 20 }}>
+                Select your questions
+              </h6>
+              <SelectQuestionComponent
+                ref={refListQuestion}
+                data={data}
+                selected={selected}
+                setSelected={setSelectQuestion}
+              />
               <Row className={"two-button-container"}>
                 <Col className={"button-left"}>
                   <Button
@@ -163,6 +177,7 @@ function App() {
                         style={{ fontSize: 10, fontWeight: "bold", width: 70 }}
                         type="submit"
                         onClick={onAddClicked}
+                        variant="danger"
                       >
                         DELETE
                       </Button>
@@ -172,7 +187,7 @@ function App() {
                     {(close) => (
                       <div>
                         <h6 className={"txt-title"}>
-                          Are you sure to delete this item?
+                          Are you sure to delete question number {selected}?
                         </h6>
                         <Button
                           style={{
@@ -203,16 +218,19 @@ function App() {
                 </Col>
               </Row>
             </div>
-          </Col>
-          <Col
-            lg={8}
-            md={8}
-            sm={7}
-            xl={8}
-            xs={12}
-            xxl={8}
-            className="right-container"
+          </div>
+          <div
+            className={`right-pane col-sm-8 ${
+              selected ? "" : "d-none d-md-block"
+            }`}
+            style={{ backgroundColor: "rgb(182, 221, 242)", height: "100vh" }}
           >
+            <button
+              className="m-2 bg-gradient rounded btn btn-default d-sm-block d-md-none"
+              onClick={handleOnBackToQuetionList}
+            >
+              {"Back"}
+            </button>
             <div className={"right-item"}>
               <SelectQuestionContainer
                 data={data}
@@ -222,9 +240,11 @@ function App() {
                 onDeleteAnswer={onDeleteAnswer}
                 setSelectedOption={setOption}
                 onChangeAnswer={onChangeAnswer}
+                onAddImg={onAddImg}
+                onDeleteImg={onDeleteImg}
               />
             </div>
-          </Col>
+          </div>
         </Row>
         {/* <Row>
           <Col>

@@ -1,12 +1,18 @@
 import { Col, Container, Row } from "react-bootstrap";
 import autosize from "autosize";
-import React, { useEffect, useRef } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from "react";
 
-function AnswerComponent(props) {
-  const ref = useRef(null);
+const AnswerComponent = forwardRef((props, ref) => {
+  const optionEndRef = useRef(null);
+  const refInput = useRef(null);
 
   useEffect(() => {
-    autosize(ref.current);
+    autosize(refInput.current);
   });
 
   const onFocusOption = (index) => {
@@ -17,15 +23,23 @@ function AnswerComponent(props) {
     props.onChangeAnswer(value);
   };
 
+  const scrollToBottom = () => {
+    optionEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useImperativeHandle(ref, () => ({
+    scrollToBottom: scrollToBottom,
+  }));
+
   return (
-    <Row
-      style={{
-        padding: 0,
-        width: "100%",
-      }}
-    >
+    <ul className={"list-item-answer"}>
       {props?.data?.[props.selected]?.answer.map((answer, index) => (
-        <>
+        <Row
+          style={{
+            padding: 0,
+            width: "100%",
+          }}
+        >
           <Col
             style={{ padding: 0 }}
             lg={2}
@@ -39,7 +53,7 @@ function AnswerComponent(props) {
           </Col>
           <Col className="p-0" lg={10} md={9} sm={9} xl={10} xs={12} xxl={10}>
             <textarea
-              ref={ref}
+              ref={refInput}
               style={{
                 maxHeight: "75px",
                 minHeight: "38px",
@@ -63,10 +77,11 @@ function AnswerComponent(props) {
               }}
             ></div>
           </Col>
-        </>
+        </Row>
       ))}
-    </Row>
+      <div ref={optionEndRef} />
+    </ul>
   );
-}
+});
 
 export default React.memo(AnswerComponent);

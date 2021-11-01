@@ -1,36 +1,43 @@
-import autosize from "autosize";
-import React, { useEffect, useRef } from "react";
+import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import { Col } from "react-bootstrap";
 
-const SelectQuestionComponent = (props) => {
-  const ref = useRef(null);
+const SelectQuestionComponent = forwardRef((props, ref) => {
+  const messagesEndRef = useRef(null);
 
-  useEffect(() => {
-    autosize(ref.current);
-  });
-
-  const toggleTouched = () => {
-    props.setSelected(props.index);
+  const toggleTouched = (index) => {
+    props.setSelected(index);
   };
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useImperativeHandle(ref, () => ({
+    scrollToBottom: scrollToBottom,
+  }));
+
   return (
-    <Col>
-      <button
-        type="button"
-        class="btn btn-primary-outline"
-        onClick={toggleTouched}
-      >
-        <h6
-          key={props.data.question}
-          className={
-            props.selected === props.index ? "txt-item-touched" : "txt-item"
-          }
-        >
-          {props.index + 1}. {props.data.question}
-        </h6>
-      </button>
-    </Col>
+    <div className={"list-item"}>
+      {props.data?.map((item, index) => (
+        <Col key={item.question}>
+          <button
+            type="button"
+            class="btn btn-primary-outline"
+            onClick={() => toggleTouched(index)}
+          >
+            <h6
+              className={
+                props.selected === index ? "txt-item-touched" : "txt-item"
+              }
+            >
+              {index + 1}. {item.question}
+            </h6>
+          </button>
+        </Col>
+      ))}
+      <div ref={messagesEndRef} />
+    </div>
   );
-};
+});
 
 export default React.memo(SelectQuestionComponent);
