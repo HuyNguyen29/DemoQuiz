@@ -4,11 +4,11 @@ import autosize from "autosize";
 import { useCallback, useEffect, useRef, useState } from "react";
 import SelectQuestionComponent from "./selectQuestionComponent/SelectQuestionComponent";
 import SelectQuestionContainer from "./selectQuestionComponent/SelectQuestionContainer";
-import { useReactMediaRecorder } from "react-media-recorder";
 import AudioRecord from "./AudioRecord";
 import VideoRecord from "./VideoRecord";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
+import { useReactMediaRecorder } from "react-media-recorder";
 
 const tmpNull = { question: "", answer: [{ option: "" }], img: "" };
 
@@ -22,16 +22,6 @@ function App() {
 
   const [selected, setSelected] = useState(0);
   const [selectedOption, setSelectedOption] = useState(0);
-
-  const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({ audio: true });
-
-  const {
-    statusVideo,
-    startRecordingVideo,
-    stopRecordingVideo,
-    mediaBlobUrlVideo,
-  } = useReactMediaRecorder({ video: true });
 
   useEffect(() => {
     const tmp = JSON.parse(localStorage.getItem("data"));
@@ -142,122 +132,30 @@ function App() {
     setSelected(0);
   };
 
+  // useEffect(() => {
+  //   const tmp = JSON.parse(localStorage.getItem("video"));
+  //   console.log(`%c tmp`, "color: blue; font-weight: 600", tmp);
+  // }, []);
+
+  const { status, startRecording, stopRecording, mediaBlobUrl, error } =
+    useReactMediaRecorder({ video: true });
+
+  console.log(`%c mediaBlobUrl`, "color: blue; font-weight: 600", mediaBlobUrl);
+
   return (
     <Container fluid className="p-0">
       <Col>
         <Row>
-          <div
-            className={`left-pane col-sm-4 ${
-              selected ? "d-none d-md-block" : ""
-            }`}
-            style={{ backgroundColor: "rgb(0, 187, 255)" }}
-          >
-            <div className={"left-item"}>
-              <h6 className={"txt-title"} style={{ paddingLeft: 20 }}>
-                Select your questions
-              </h6>
-              <SelectQuestionComponent
-                ref={refListQuestion}
-                data={data}
-                selected={selected}
-                setSelected={setSelectQuestion}
-              />
-              <Row className={"two-button-container"}>
-                <Col className={"button-left"}>
-                  <Button
-                    style={{ fontSize: 10, fontWeight: "bold", width: 70 }}
-                    type="submit"
-                    onClick={onAddClicked}
-                  >
-                    ADD
-                  </Button>
-                </Col>
-                <Col className={"button-right"}>
-                  <Popup
-                    trigger={
-                      <Button
-                        style={{ fontSize: 10, fontWeight: "bold", width: 70 }}
-                        type="submit"
-                        onClick={onAddClicked}
-                        variant="danger"
-                      >
-                        DELETE
-                      </Button>
-                    }
-                    modal
-                  >
-                    {(close) => (
-                      <div>
-                        <h6 className={"txt-title"}>
-                          Are you sure to delete question number {selected}?
-                        </h6>
-                        <Button
-                          style={{
-                            fontSize: 10,
-                            fontWeight: "bold",
-                            width: 70,
-                          }}
-                          type="submit"
-                          onClick={() => onDeleteClicked(close)}
-                        >
-                          Yes
-                        </Button>
-                        <Button
-                          style={{
-                            fontSize: 10,
-                            fontWeight: "bold",
-                            width: 70,
-                            marginLeft: 10,
-                          }}
-                          variant="secondary"
-                          onClick={() => close()}
-                        >
-                          No
-                        </Button>
-                      </div>
-                    )}
-                  </Popup>
-                </Col>
-              </Row>
-            </div>
-          </div>
-          <div
-            className={`right-pane col-sm-8 ${
-              selected ? "" : "d-none d-md-block"
-            }`}
-            style={{ backgroundColor: "rgb(182, 221, 242)", height: "100vh" }}
-          >
-            <button
-              className="m-2 bg-gradient rounded btn btn-default d-sm-block d-md-none"
-              onClick={handleOnBackToQuetionList}
-            >
-              {"Back"}
-            </button>
-            <div className={"right-item"}>
-              <SelectQuestionContainer
-                data={data}
-                selected={selected}
-                onChangeQuestion={onChangeQuestion}
-                onAddAnswer={onAddAnswer}
-                onDeleteAnswer={onDeleteAnswer}
-                setSelectedOption={setOption}
-                onChangeAnswer={onChangeAnswer}
-                onAddImg={onAddImg}
-                onDeleteImg={onDeleteImg}
-              />
-            </div>
-          </div>
-        </Row>
-        {/* <Row>
-          <Col>
+          {/* <Col>
             <AudioRecord />
-          </Col>
+          </Col> */}
           <Col>
             <VideoRecord />
           </Col>
         </Row>
-        <Row></Row> */}
+        <Row></Row>
       </Col>
+      <div></div>
     </Container>
   );
 }
